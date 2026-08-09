@@ -33,6 +33,8 @@ Data shape: `data/spreads/index.json` (summary list) + `data/spreads/{id}.json` 
 
 **This is deliberate, not incidental complexity — do not "simplify" it back to a direct client-side fetch or a Cloudflare Worker proxy.** A Cloudflare Worker version was built first and abandoned: Cloudflare Workers execute from arbitrary global edge PoPs on the free plan (no jurisdiction pinning outside Enterprise), and Google's Gemini API geo-blocks some of those regions, so calls failed consistently with `FAILED_PRECONDITION: User location is not supported`, unfixable for free. GitHub Actions runners don't have this problem. If Gemini integration needs to change, keep the request/response-file pattern.
 
+`buildPrompt()` in `process-requests.mjs` has a standing instruction ("성적으로 노골적이거나 신체적으로 적나라한 묘사는 절대 하지 마세요...") that applies to every spread regardless of topic — this is a deliberate content boundary, not a stray line to delete. Spreads can legitimately cover intimate/romantic themes (see `spread-intimate-narrative-01`) via metaphor and literary imagery; the per-spread `description` field is sent to Gemini as additional tone guidance on top of, not instead of, that standing line.
+
 `GEMINI_MODEL` is set in the workflow env (currently `gemini-2.5-flash`). Google's free-tier model lineup changes often and old models get hard-deprecated (e.g. `gemini-2.0-flash` was shut down 2026-03, `gemini-2.5-flash-lite` is closed to new users) — a `429`/`404` here is often just a stale model name, not a real quota problem. Check https://aistudio.google.com/rate-limit before assuming code is broken.
 
 ### No separate admin auth system

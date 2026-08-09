@@ -13,12 +13,12 @@ function makeRequestId() {
 }
 
 // onProgress(elapsedMs) 콜백으로 대기 상태를 UI에 반영할 수 있다.
-async function requestAiInterpretation({ spreadQuestion, characterContext, positions }, onProgress) {
+async function requestAiInterpretation({ spreadQuestion, spreadDescription, characterContext, positions }, onProgress) {
   const requestId = makeRequestId();
 
   await commitJsonFile(
     `data/_requests/${requestId}.json`,
-    () => ({ spreadQuestion, characterContext, positions, requestedAt: new Date().toISOString() }),
+    () => ({ spreadQuestion, spreadDescription, characterContext, positions, requestedAt: new Date().toISOString() }),
     `AI 해석 요청: ${requestId}`
   );
 

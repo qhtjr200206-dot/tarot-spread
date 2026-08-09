@@ -34,5 +34,14 @@
     "readingCount": 0,
     "latestReadingDate": null,
     "createdAt": "2026-08-09T20:02:00+09:00"
+  },
+  {
+    "id": "spread-intimate-narrative-01",
+    "question": "이 인물들의 잠자리는 어떻게 시작되어 어디로 향하는가?",
+    "customName": "은밀한 조류 — 여섯 개의 장면",
+    "positionCount": 6,
+    "readingCount": 0,
+    "latestReadingDate": null,
+    "createdAt": "2026-08-09T21:30:00+09:00"
   }
 ]

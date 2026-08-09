@@ -26,12 +26,17 @@ const RESPONSE_SCHEMA = {
   required: ["positions", "overall"],
 };
 
-function buildPrompt(spreadQuestion, characterContext, positions) {
+function buildPrompt(spreadQuestion, spreadDescription, characterContext, positions) {
   const lines = [
-    "당신은 소설/극 속 등장인물을 타로로 분석하는 숙련된 리더입니다.",
-    "일반적인 오늘의 운세(연애운, 금전운)가 아니라, 인물의 성격·심리·동기·관계 패턴·도덕적 그림자를 분석하는 것이 목적입니다.",
+    "당신은 소설/극 속 등장인물과 그 관계를 타로로 분석하는 숙련된 리더입니다.",
+    "일반적인 오늘의 운세(연애운, 금전운)가 아니라, 인물의 성격·심리·동기·관계 패턴·도덕적 그림자, 혹은 인물 간 관계의 정서적 서사를 분석하는 것이 목적입니다.",
+    "성적으로 노골적이거나 신체적으로 적나라한 묘사는 절대 하지 마세요. 친밀감이나 관계를 다루는 경우에도 은유·상징·감정선을 중심으로 표현하세요.",
     `스프레드 질문: ${spreadQuestion}`,
   ];
+
+  if (spreadDescription) {
+    lines.push(`스프레드 설명/톤 가이드: ${spreadDescription}`);
+  }
 
   if (characterContext && (characterContext.name || characterContext.info || characterContext.situation)) {
     lines.push("", "분석 대상 캐릭터 정보:");
@@ -56,13 +61,14 @@ function buildPrompt(spreadQuestion, characterContext, positions) {
     "1. 각 자리(order)마다, 그 자리의 의미·카드·참고 상징을 캐릭터 정보와 결합해 2~4문장의 한국어 해석(interpretation)을 작성하세요.",
     "2. 모든 자리를 종합한 3~5문장의 전체 총합 해석(overall)을 작성하세요.",
     "캐릭터 정보가 주어졌다면 그 인물에 특화된 해석을 작성하고, 없다면 카드와 자리 의미만으로 일반적인 인물 분석 해석을 작성하세요.",
+    "카드의 사전적 의미나 키워드를 그대로 나열하지 마세요. 참고 상징은 근거로 삼되, 소설의 한 장면을 묘사하듯 상상력과 문학적 비유를 살려 서술하세요 — 감각, 분위기, 정서의 결을 느낄 수 있게 씁니다.",
     "과장되거나 근거 없는 단정 대신, 카드 상징과 자리 의미에 근거한 해석을 작성하세요."
   );
 
   return lines.join("\n");
 }
 
-async function callGemini(spreadQuestion, characterContext, positions) {
+async function callGemini(spreadQuestion, spreadDescription, characterContext, positions) {
   const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
@@ -70,7 +76,7 @@ async function callGemini(spreadQuestion, characterContext, positions) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      contents: [{ role: "user", parts: [{ text: buildPrompt(spreadQuestion, characterContext, positions) }] }],
+      contents: [{ role: "user", parts: [{ text: buildPrompt(spreadQuestion, spreadDescription, characterContext, positions) }] }],
       generationConfig: {
         responseMimeType: "application/json",
         responseSchema: RESPONSE_SCHEMA,
@@ -121,7 +127,7 @@ async function main() {
     }
 
     try {
-      const result = await callGemini(request.spreadQuestion, request.characterContext, request.positions);
+      const result = await callGemini(request.spreadQuestion, request.spreadDescription, request.characterContext, request.positions);
       await writeFile(responsePath, JSON.stringify(result, null, 2) + "\n", "utf-8");
       console.log(`완료: ${id}`);
     } catch (err) {

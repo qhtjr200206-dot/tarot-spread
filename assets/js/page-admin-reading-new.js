@@ -221,6 +221,7 @@
       const result = await requestAiInterpretation(
         {
           spreadQuestion: spread.question,
+          spreadDescription: spread.description || null,
           characterContext: collectCharacterContext(),
           positions: rows.map((r) => ({
             order: r.order,
