@@ -5,7 +5,11 @@
   }
 
   const spreadId = qs("spread");
+  const readingId = qs("id");
+  const isEditMode = Boolean(readingId);
+
   const breadcrumbEl = document.getElementById("breadcrumb");
+  const pageTitleEl = document.getElementById("page-title");
   const summaryEl = document.getElementById("spread-summary");
   const cardsEditor = document.getElementById("cards-editor");
   const randomAllBtn = document.getElementById("random-all-btn");
@@ -22,16 +26,28 @@
     return;
   }
 
-  breadcrumbEl.innerHTML = `
+  if (isEditMode) {
+    pageTitleEl.textContent = "리딩 수정";
+    submitBtn.textContent = "수정 내용 저장";
+  }
+
+  breadcrumbEl.innerHTML = isEditMode
+    ? `
+    <a href="../index.html">스프레드 목록</a> /
+    <a href="../spread.html?id=${encodeURIComponent(spreadId)}">스프레드 상세</a> /
+    <a href="../reading.html?spread=${encodeURIComponent(spreadId)}&id=${encodeURIComponent(readingId)}">리딩 상세</a> /
+  `
+    : `
     <a href="../index.html">스프레드 목록</a> /
     <a href="../spread.html?id=${encodeURIComponent(spreadId)}">스프레드 상세</a> /
   `;
 
-  // 오늘 날짜를 기본값으로
+  // 오늘 날짜를 기본값으로 (수정 모드에서는 아래에서 기존 값으로 덮어씀)
   const today = new Date();
   dateInput.value = today.toISOString().slice(0, 10);
 
   let spread = null;
+  let existingReading = null;
   let hasGeneratedOnce = false;
 
   function cardOptionsHtml() {
@@ -75,6 +91,34 @@
     randomAllBtn.disabled = false;
   }
 
+  function prefillFromExistingReading() {
+    dateInput.value = existingReading.date;
+    document.getElementById("title-input").value = existingReading.title || "";
+
+    const cc = existingReading.characterContext;
+    document.getElementById("character-name-input").value = cc?.name || "";
+    document.getElementById("character-info-input").value = cc?.info || "";
+    document.getElementById("character-situation-input").value = cc?.situation || "";
+
+    document.getElementById("overall-input").value = existingReading.overallInterpretation || "";
+    document.getElementById("reader-note-input").value = existingReading.readerNote || "";
+
+    const cardsByOrder = new Map((existingReading.cards || []).map((c) => [c.order, c]));
+    cardsEditor.querySelectorAll(".card-row").forEach((row) => {
+      const order = Number(row.dataset.order);
+      const existingCard = cardsByOrder.get(order);
+      if (!existingCard) return;
+      row.querySelector(".card-select").value = existingCard.card || "";
+      row.querySelector(".orientation-select").value = existingCard.orientation || "upright";
+      row.querySelector(".card-ai-textarea").value = existingCard.aiInterpretation || "";
+    });
+
+    if ((existingReading.cards || []).some((c) => c.aiInterpretation)) {
+      hasGeneratedOnce = true;
+      aiBtn.textContent = "🔄 다시 생성 (Gemini 재리딩)";
+    }
+  }
+
   function collectCardRows() {
     return Array.from(cardsEditor.querySelectorAll(".card-row")).map((row) => ({
       order: Number(row.dataset.order),
@@ -84,6 +128,14 @@
       orientation: row.querySelector(".orientation-select").value,
       aiTextarea: row.querySelector(".card-ai-textarea"),
     }));
+  }
+
+  function collectCharacterContext() {
+    const name = document.getElementById("character-name-input").value.trim();
+    const info = document.getElementById("character-info-input").value.trim();
+    const situation = document.getElementById("character-situation-input").value.trim();
+    if (!name && !info && !situation) return null;
+    return { name: name || null, info: info || null, situation: situation || null };
   }
 
   // 실물 카드가 없을 때를 위한 랜덤 뽑기. excludeCards에 있는 카드는 제외해 같은 리딩 안에서 중복되지 않게 한다.
@@ -126,26 +178,27 @@
     });
   });
 
-  function collectCharacterContext() {
-    const name = document.getElementById("character-name-input").value.trim();
-    const info = document.getElementById("character-info-input").value.trim();
-    const situation = document.getElementById("character-situation-input").value.trim();
-    if (!name && !info && !situation) return null;
-    return { name: name || null, info: info || null, situation: situation || null };
-  }
-
-  (async function loadSpread() {
+  (async function load() {
     try {
       const { json } = await ghGetJsonFile(`data/spreads/${spreadId}.json`);
       if (!json) throw new Error("스프레드를 찾을 수 없습니다.");
       spread = json;
       const displayName = spread.customName || spread.question;
-      document.title = `리딩 추가 · ${displayName}`;
-      summaryEl.textContent = `"${displayName}" 스프레드에 새 리딩을 기록합니다.`;
+      document.title = `${isEditMode ? "리딩 수정" : "리딩 추가"} · ${displayName}`;
+      summaryEl.textContent = isEditMode
+        ? `"${displayName}" 스프레드의 리딩을 수정합니다.`
+        : `"${displayName}" 스프레드에 새 리딩을 기록합니다.`;
       renderCardsEditor();
+
+      if (isEditMode) {
+        const { json: readingJson } = await ghGetJsonFile(`data/readings/${spreadId}/${readingId}.json`);
+        if (!readingJson) throw new Error("수정할 리딩을 찾을 수 없습니다.");
+        existingReading = readingJson;
+        prefillFromExistingReading();
+      }
     } catch (err) {
       summaryEl.textContent = "";
-      alertEl.innerHTML = `<div class="alert alert-error">스프레드를 불러오지 못했습니다: ${escapeHtml(err.message)}</div>`;
+      alertEl.innerHTML = `<div class="alert alert-error">${isEditMode ? "리딩" : "스프레드"}을 불러오지 못했습니다: ${escapeHtml(err.message)}</div>`;
     }
   })();
 
@@ -226,68 +279,115 @@
     }
 
     submitBtn.disabled = true;
-    submitBtn.textContent = "저장 중...";
+    submitBtn.textContent = isEditMode ? "저장 중..." : "저장 중...";
+
+    const cards = rows.map((r) => ({
+      order: r.order,
+      card: r.card,
+      orientation: r.orientation,
+      positionLabel: r.positionLabel,
+      positionMeaning: r.positionMeaning,
+      aiInterpretation: r.aiTextarea.value.trim(),
+    }));
 
     try {
-      const { json: existingReadingsIndex } = await ghGetJsonFile(`data/readings/${spreadId}/index.json`);
-      const readingId = nextAvailableReadingId(existingReadingsIndex, date);
-      const createdAt = new Date().toISOString();
-      const createdBy = getAdminUser() || "admin";
+      if (isEditMode) {
+        const updatedReading = {
+          ...existingReading,
+          date,
+          title: title || null,
+          characterContext,
+          cards,
+          overallInterpretation,
+          readerNote,
+          updatedAt: new Date().toISOString(),
+          updatedBy: getAdminUser() || "admin",
+        };
 
-      const reading = {
-        id: readingId,
-        spreadId,
-        date,
-        title: title || null,
-        characterContext,
-        cards: rows.map((r) => ({
-          order: r.order,
-          card: r.card,
-          orientation: r.orientation,
-          positionLabel: r.positionLabel,
-          positionMeaning: r.positionMeaning,
-          aiInterpretation: r.aiTextarea.value.trim(),
-        })),
-        overallInterpretation,
-        readerNote,
-        createdAt,
-        createdBy,
-      };
+        await commitJsonFile(
+          `data/readings/${spreadId}/${readingId}.json`,
+          () => updatedReading,
+          `리딩 수정: ${spreadId} / ${readingId}`
+        );
 
-      await commitJsonFile(
-        `data/readings/${spreadId}/${readingId}.json`,
-        () => reading,
-        `새 리딩 추가: ${spreadId} / ${readingId}`
-      );
+        await commitJsonFile(
+          `data/readings/${spreadId}/index.json`,
+          function (current) {
+            const list = current || [];
+            return list.map((r) => (r.id === readingId ? { ...r, date, title: title || null } : r));
+          },
+          `리딩 목록 갱신 (수정): ${spreadId}`
+        );
 
-      await commitJsonFile(
-        `data/readings/${spreadId}/index.json`,
-        function (current) {
-          const list = current || [];
-          list.push({ id: readingId, date, title: title || null, createdAt });
-          return list;
-        },
-        `리딩 목록 갱신: ${spreadId}`
-      );
+        await commitJsonFile(
+          `data/spreads/index.json`,
+          function (current) {
+            const list = current || [];
+            return list.map((s) => {
+              if (s.id !== spreadId) return s;
+              const latest = !s.latestReadingDate || date > s.latestReadingDate ? date : s.latestReadingDate;
+              return { ...s, latestReadingDate: latest };
+            });
+          },
+          `스프레드 목록 갱신 (리딩 수정): ${spreadId}`
+        );
+      } else {
+        const { json: existingReadingsIndex } = await ghGetJsonFile(`data/readings/${spreadId}/index.json`);
+        const newReadingId = nextAvailableReadingId(existingReadingsIndex, date);
+        const createdAt = new Date().toISOString();
+        const createdBy = getAdminUser() || "admin";
 
-      await commitJsonFile(
-        `data/spreads/index.json`,
-        function (current) {
-          const list = current || [];
-          return list.map((s) => {
-            if (s.id !== spreadId) return s;
-            const latest = !s.latestReadingDate || date > s.latestReadingDate ? date : s.latestReadingDate;
-            return { ...s, readingCount: (s.readingCount || 0) + 1, latestReadingDate: latest };
-          });
-        },
-        `스프레드 목록의 리딩 수 갱신: ${spreadId}`
-      );
+        const reading = {
+          id: newReadingId,
+          spreadId,
+          date,
+          title: title || null,
+          characterContext,
+          cards,
+          overallInterpretation,
+          readerNote,
+          createdAt,
+          createdBy,
+        };
+
+        await commitJsonFile(
+          `data/readings/${spreadId}/${newReadingId}.json`,
+          () => reading,
+          `새 리딩 추가: ${spreadId} / ${newReadingId}`
+        );
+
+        await commitJsonFile(
+          `data/readings/${spreadId}/index.json`,
+          function (current) {
+            const list = current || [];
+            list.push({ id: newReadingId, date, title: title || null, createdAt });
+            return list;
+          },
+          `리딩 목록 갱신: ${spreadId}`
+        );
+
+        await commitJsonFile(
+          `data/spreads/index.json`,
+          function (current) {
+            const list = current || [];
+            return list.map((s) => {
+              if (s.id !== spreadId) return s;
+              const latest = !s.latestReadingDate || date > s.latestReadingDate ? date : s.latestReadingDate;
+              return { ...s, readingCount: (s.readingCount || 0) + 1, latestReadingDate: latest };
+            });
+          },
+          `스프레드 목록의 리딩 수 갱신: ${spreadId}`
+        );
+
+        window.location.href = `../reading.html?spread=${encodeURIComponent(spreadId)}&id=${encodeURIComponent(newReadingId)}`;
+        return;
+      }
 
       window.location.href = `../reading.html?spread=${encodeURIComponent(spreadId)}&id=${encodeURIComponent(readingId)}`;
     } catch (err) {
       alertEl.innerHTML = `<div class="alert alert-error">저장에 실패했습니다: ${escapeHtml(err.message)}</div>`;
       submitBtn.disabled = false;
-      submitBtn.textContent = "리딩 저장";
+      submitBtn.textContent = isEditMode ? "수정 내용 저장" : "리딩 저장";
     }
   });
 })();

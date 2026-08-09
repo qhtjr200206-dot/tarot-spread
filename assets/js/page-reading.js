@@ -6,6 +6,7 @@
   const cardsWrap = document.getElementById("cards-table-wrap");
   const overallEl = document.getElementById("overall-interpretation");
   const noteEl = document.getElementById("reader-note");
+  const editLink = document.getElementById("edit-reading-link");
 
   if (!spreadId || !readingId) {
     renderError(headerEl, "스프레드 또는 리딩 id가 없습니다.");
@@ -16,6 +17,10 @@
     <a href="./index.html">스프레드 목록</a> /
     <a href="./spread.html?id=${encodeURIComponent(spreadId)}">스프레드 상세</a> /
   `;
+
+  if (editLink) {
+    editLink.href = `./admin/reading-new.html?spread=${encodeURIComponent(spreadId)}&id=${encodeURIComponent(readingId)}`;
+  }
 
   try {
     const [spread, reading] = await Promise.all([
@@ -44,7 +49,7 @@
             <tr>
               <td><span class="order-badge">${c.order}</span></td>
               <td>${escapeHtml(c.positionLabel)}</td>
-              <td><strong>${escapeHtml(c.card)}</strong></td>
+              <td><strong>${escapeHtml(c.card)}</strong> ${c.orientation === "reversed" ? "(역방향)" : "(정방향)"}</td>
               <td>${escapeHtml(c.aiInterpretation || "")}</td>
             </tr>
           `
