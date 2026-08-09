@@ -384,6 +384,11 @@ textarea {
   flex: 0 0 130px;
 }
 
+.inline-fields .dice-btn {
+  flex: 0 0 auto;
+  padding: 9px 12px;
+}
+
 .regenerate-hint {
   color: var(--text-muted);
   font-size: 0.8rem;

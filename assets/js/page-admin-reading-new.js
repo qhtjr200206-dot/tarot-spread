@@ -8,6 +8,7 @@
   const breadcrumbEl = document.getElementById("breadcrumb");
   const summaryEl = document.getElementById("spread-summary");
   const cardsEditor = document.getElementById("cards-editor");
+  const randomAllBtn = document.getElementById("random-all-btn");
   const aiBtn = document.getElementById("ai-interpret-btn");
   const aiStatus = document.getElementById("ai-status");
   const submitBtn = document.getElementById("submit-btn");
@@ -59,6 +60,7 @@
               <option value="upright">정방향</option>
               <option value="reversed">역방향</option>
             </select>
+            <button type="button" class="btn btn-secondary dice-btn" title="이 자리만 랜덤으로 다시 뽑기">🎲</button>
           </div>
           <div class="form-group" style="margin-top: 10px; margin-bottom: 0;">
             <label>이 자리의 AI 해석</label>
@@ -70,6 +72,7 @@
       .join("");
     aiBtn.disabled = false;
     submitBtn.disabled = false;
+    randomAllBtn.disabled = false;
   }
 
   function collectCardRows() {
@@ -82,6 +85,46 @@
       aiTextarea: row.querySelector(".card-ai-textarea"),
     }));
   }
+
+  // 실물 카드가 없을 때를 위한 랜덤 뽑기. excludeCards에 있는 카드는 제외해 같은 리딩 안에서 중복되지 않게 한다.
+  function drawRandomCards(count, excludeCards) {
+    const pool = TAROT_CARDS.filter((c) => !excludeCards.includes(c));
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, count).map((card) => ({
+      card,
+      orientation: Math.random() < 0.5 ? "reversed" : "upright",
+    }));
+  }
+
+  cardsEditor.addEventListener("click", function (e) {
+    const diceBtn = e.target.closest(".dice-btn");
+    if (!diceBtn) return;
+    const row = diceBtn.closest(".card-row");
+    const otherRows = Array.from(cardsEditor.querySelectorAll(".card-row")).filter((r) => r !== row);
+    const usedElsewhere = otherRows.map((r) => r.querySelector(".card-select").value).filter(Boolean);
+    const [drawn] = drawRandomCards(1, usedElsewhere);
+    if (!drawn) return;
+    row.querySelector(".card-select").value = drawn.card;
+    row.querySelector(".orientation-select").value = drawn.orientation;
+  });
+
+  randomAllBtn.addEventListener("click", function () {
+    const rows = collectCardRows();
+    const alreadyChosen = rows.some((r) => r.card);
+    if (alreadyChosen) {
+      const confirmed = window.confirm("이미 선택된 카드가 있습니다. 전체를 새로 랜덤 뽑기하면 모두 덮어씁니다. 계속할까요?");
+      if (!confirmed) return;
+    }
+    const drawn = drawRandomCards(rows.length, []);
+    const rowEls = Array.from(cardsEditor.querySelectorAll(".card-row"));
+    rowEls.forEach((row, i) => {
+      row.querySelector(".card-select").value = drawn[i].card;
+      row.querySelector(".orientation-select").value = drawn[i].orientation;
+    });
+  });
 
   function collectCharacterContext() {
     const name = document.getElementById("character-name-input").value.trim();
