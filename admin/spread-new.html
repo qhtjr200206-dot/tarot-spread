@@ -26,8 +26,8 @@
   </header>
 
   <main class="container">
-    <div class="breadcrumb"><a href="../index.html">스프레드 목록</a> /</div>
-    <h1 class="page-title">새 스프레드 만들기</h1>
+    <div class="breadcrumb" id="breadcrumb"><a href="../index.html">스프레드 목록</a> /</div>
+    <h1 class="page-title" id="page-title">새 스프레드 만들기</h1>
     <p class="page-subtitle">질문과, 카드를 배열할 자리(포지션)별 의미를 정의합니다.</p>
 
     <div id="form-alert"></div>
@@ -45,8 +45,8 @@
       </div>
 
       <div class="form-group">
-        <label for="description-input">설명 (선택)</label>
-        <textarea id="description-input" placeholder="이 스프레드에 대한 간단한 설명"></textarea>
+        <label for="description-input">설명 / AI 톤 가이드 (선택)</label>
+        <textarea id="description-input" placeholder="이 스프레드에 대한 설명. AI 해석 생성 시 Gemini에게 그대로 전달되는 톤 가이드로도 쓰입니다 (예: 표현 수위, 문체, 강조하고 싶은 관점 등)."></textarea>
       </div>
 
       <div class="form-group">

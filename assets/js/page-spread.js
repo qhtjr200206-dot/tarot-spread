@@ -4,6 +4,7 @@
   const positionsWrap = document.getElementById("positions-table-wrap");
   const readingListEl = document.getElementById("reading-list");
   const newReadingLink = document.getElementById("new-reading-link");
+  const editSpreadLink = document.getElementById("edit-spread-link");
 
   if (!spreadId) {
     renderError(headerEl, "스프레드 id가 없습니다.");
@@ -46,6 +47,9 @@
 
     if (newReadingLink) {
       newReadingLink.href = `./admin/reading-new.html?spread=${encodeURIComponent(spreadId)}`;
+    }
+    if (editSpreadLink) {
+      editSpreadLink.href = `./admin/spread-new.html?id=${encodeURIComponent(spreadId)}`;
     }
 
     let readings = [];
