@@ -1,0 +1,12 @@
+name = "tarot-gemini-proxy"
+main = "src/worker.js"
+compatibility_date = "2026-01-01"
+
+# 비밀값(GEMINI_API_KEY, ADMIN_SHARED_SECRET)은 여기 두지 않는다.
+# 반드시 아래 명령으로 등록할 것:
+#   wrangler secret put GEMINI_API_KEY
+#   wrangler secret put ADMIN_SHARED_SECRET
+
+[vars]
+ALLOWED_ORIGIN = "https://YOUR_GITHUB_USERNAME.github.io"
+GEMINI_MODEL = "gemini-2.0-flash"

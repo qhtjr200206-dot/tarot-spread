@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>리딩 추가 · 타로 스프레드 아카이브</title>
+  <script>
+    (function () {
+      var stored = localStorage.getItem("tarot-theme");
+      var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/theme.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <datalist id="card-name-list"></datalist>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../index.html">타로 스프레드<span class="accent-dot">.</span></a>
+      <div class="header-actions">
+        <span id="admin-status" class="admin-status"></span>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="테마 전환"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="breadcrumb" class="breadcrumb"></div>
+    <h1 class="page-title">리딩 추가</h1>
+    <div id="spread-summary" class="page-subtitle">불러오는 중...</div>
+
+    <div id="form-alert"></div>
+
+    <form id="reading-form">
+      <div class="form-group">
+        <label for="date-input">리딩 날짜</label>
+        <input type="date" id="date-input" required />
+      </div>
+
+      <div class="form-group">
+        <label for="title-input">리딩 제목 (선택)</label>
+        <input type="text" id="title-input" placeholder="예: 8월 첫 리딩" />
+      </div>
+
+      <div class="form-group">
+        <label>카드 배치</label>
+        <div id="cards-editor"><p class="skeleton-text">스프레드 정보를 불러오는 중...</p></div>
+      </div>
+
+      <div class="form-group">
+        <button type="button" id="ai-interpret-btn" class="btn btn-secondary" disabled>✨ AI 해석 생성 (Gemini, 1회 호출)</button>
+        <p class="form-hint" id="ai-status"></p>
+      </div>
+
+      <div class="form-group">
+        <label for="overall-input">전체 총합 해석</label>
+        <textarea id="overall-input" placeholder="AI 해석 생성 후 자동으로 채워지며, 자유롭게 수정할 수 있습니다."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="reader-note-input">리더의 개인적 해석</label>
+        <textarea id="reader-note-input" placeholder="리딩을 진행하며 느낀 개인적인 소견을 적어주세요."></textarea>
+      </div>
+
+      <button type="submit" class="btn" id="submit-btn" disabled>리딩 저장</button>
+    </form>
+  </main>
+
+  <p class="footer-note">타로 스프레드 아카이브 · 정적 사이트</p>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/github-api.js"></script>
+  <script src="../assets/js/cards.js"></script>
+  <script src="../assets/js/gemini-client.js"></script>
+  <script src="../assets/js/page-admin-reading-new.js"></script>
+</body>
+</html>

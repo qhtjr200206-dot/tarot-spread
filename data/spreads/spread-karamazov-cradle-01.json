@@ -1,0 +1,17 @@
+{
+  "id": "spread-karamazov-cradle-01",
+  "question": "이 캐릭터의 유년기는 지금의 도덕관과 어떻게 연결되는가?",
+  "customName": "요람의 기억",
+  "description": "어린 시절의 결핍과 사건이 캐릭터의 도덕적 기준으로 자라나는 과정을 따라가는 7카드 스프레드입니다.",
+  "positions": [
+    { "order": 1, "label": "요람의 부재", "meaning": "어린 시절 결핍되었던 것" },
+    { "order": 2, "label": "최초의 각인", "meaning": "도덕관에 흔적을 남긴 형성적 사건/기억" },
+    { "order": 3, "label": "부모의 거울", "meaning": "부모에게서 물려받거나 반발한 가치관" },
+    { "order": 4, "label": "그 사건", "meaning": "유년에 뿌리를 둔 죄책감·수치심의 기원" },
+    { "order": 5, "label": "숨은 보호자", "meaning": "구원처럼 개입했던 인물이나 순간" },
+    { "order": 6, "label": "나침반", "meaning": "굳어진 현재의 도덕적 기준" },
+    { "order": 7, "label": "아이였던 나에게", "meaning": "어린 자신과 화해하는 방식" }
+  ],
+  "createdAt": "2026-08-09T20:01:00+09:00",
+  "createdBy": "admin"
+}

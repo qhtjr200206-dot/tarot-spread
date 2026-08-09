@@ -1,0 +1,13 @@
+{
+  "id": "spread-personality-01",
+  "question": "이 인물은 어떤 성격인가?",
+  "customName": "성격 분석 스프레드",
+  "description": "인물의 성격과 그 배경, 발현 방식을 살펴보는 3카드 스프레드입니다.",
+  "positions": [
+    { "order": 1, "label": "성격", "meaning": "인물의 표면적으로 드러나는 성격" },
+    { "order": 2, "label": "형성 배경", "meaning": "그 성격이 형성된 배경이나 원인" },
+    { "order": 3, "label": "발현 방식", "meaning": "그 성격이 실제로 드러나는 방식" }
+  ],
+  "createdAt": "2026-08-09T10:00:00+09:00",
+  "createdBy": "example-admin"
+}

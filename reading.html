@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>리딩 상세 · 타로 스프레드 아카이브</title>
+  <script>
+    (function () {
+      var stored = localStorage.getItem("tarot-theme");
+      var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="./assets/css/theme.css" />
+  <link rel="stylesheet" href="./assets/css/main.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="./index.html">타로 스프레드<span class="accent-dot">.</span></a>
+      <div class="header-actions">
+        <span id="admin-status" class="admin-status"></span>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="테마 전환"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="breadcrumb" class="breadcrumb"></div>
+    <div id="reading-header">
+      <p class="skeleton-text">불러오는 중...</p>
+    </div>
+
+    <div class="section">
+      <div class="section-heading">
+        <h2>카드별 해석</h2>
+      </div>
+      <div id="cards-table-wrap"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-heading">
+        <h2>전체 총합 해석</h2>
+      </div>
+      <div id="overall-interpretation" class="text-block"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-heading">
+        <h2>리더의 개인적 해석</h2>
+      </div>
+      <div id="reader-note" class="text-block"></div>
+    </div>
+  </main>
+
+  <p class="footer-note">타로 스프레드 아카이브 · 정적 사이트</p>
+
+  <script src="./assets/js/config.js"></script>
+  <script src="./assets/js/common.js"></script>
+  <script src="./assets/js/theme.js"></script>
+  <script src="./assets/js/auth.js"></script>
+  <script src="./assets/js/page-reading.js"></script>
+</body>
+</html>

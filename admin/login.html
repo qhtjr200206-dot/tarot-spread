@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 로그인 · 타로 스프레드 아카이브</title>
+  <script>
+    (function () {
+      var stored = localStorage.getItem("tarot-theme");
+      var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/theme.css" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../index.html">타로 스프레드<span class="accent-dot">.</span></a>
+      <div class="header-actions">
+        <span id="admin-status" class="admin-status"></span>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="테마 전환"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 480px;">
+    <h1 class="page-title">관리자 로그인</h1>
+    <p class="page-subtitle">이 저장소에 <strong>Contents: Read and write</strong> 권한이 있는 GitHub Personal Access Token을 입력하세요.</p>
+
+    <div id="login-alert"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="pat-input">GitHub Personal Access Token</label>
+        <input type="password" id="pat-input" name="pat" placeholder="github_pat_..." autocomplete="off" required />
+        <p class="form-hint">
+          토큰은 이 브라우저 탭 세션에만 보관되며(sessionStorage), 저장소나 서버로 전송되지 않습니다. 탭을 닫으면 사라집니다.
+        </p>
+      </div>
+      <button type="submit" class="btn" id="login-submit">로그인</button>
+    </form>
+  </main>
+
+  <p class="footer-note">타로 스프레드 아카이브 · 정적 사이트</p>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/page-admin-login.js"></script>
+</body>
+</html>

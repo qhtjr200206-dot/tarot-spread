@@ -1,0 +1,19 @@
+{
+  "id": "spread-karamazov-pilgrimage-01",
+  "question": "이 캐릭터는 어떻게, 누구를 사랑하게 되는가?",
+  "customName": "사랑의 순례",
+  "description": "본능적 끌림에서 시작해 관계의 전개와 미래까지, 사랑의 전 과정을 순례하듯 따라가는 9카드 스프레드입니다.",
+  "positions": [
+    { "order": 1, "label": "유혹", "meaning": "본능적·직관적으로 끌리는 유형" },
+    { "order": 2, "label": "이상", "meaning": "이성적으로 '좋은 상대'라 여기는 유형" },
+    { "order": 3, "label": "순간", "meaning": "사랑에 빠지는 순간" },
+    { "order": 4, "label": "상대", "meaning": "사랑하게 된 상대" },
+    { "order": 5, "label": "조화", "meaning": "잠자리에서의 궁합, 혹은 양상" },
+    { "order": 6, "label": "흔적", "meaning": "잠자리에서 반복되는 패턴" },
+    { "order": 7, "label": "진심", "meaning": "사랑에 빠졌을 때 드러나는 그의 진짜 모습" },
+    { "order": 8, "label": "태도", "meaning": "사랑을 대하는 근본 태도" },
+    { "order": 9, "label": "미래", "meaning": "그들이 닿게 될 미래" }
+  ],
+  "createdAt": "2026-08-09T20:02:00+09:00",
+  "createdBy": "admin"
+}

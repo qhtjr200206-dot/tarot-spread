@@ -1,0 +1,33 @@
+{
+  "id": "2026-08-09",
+  "spreadId": "spread-personality-01",
+  "date": "2026-08-09",
+  "title": null,
+  "cards": [
+    {
+      "order": 1,
+      "card": "The Fool",
+      "positionLabel": "성격",
+      "positionMeaning": "인물의 표면적으로 드러나는 성격",
+      "aiInterpretation": "바보 카드는 순수함과 새로운 시작에 대한 열망을 상징합니다. 이 인물은 형식에 얽매이지 않고 자유롭게 자신을 표현하는 성격을 지니고 있습니다."
+    },
+    {
+      "order": 2,
+      "card": "The Empress",
+      "positionLabel": "형성 배경",
+      "positionMeaning": "그 성격이 형성된 배경이나 원인",
+      "aiInterpretation": "여황제 카드는 풍요롭고 양육적인 환경을 나타냅니다. 이러한 성격은 정서적으로 안정되고 지지적인 성장 배경에서 비롯되었을 가능성이 큽니다."
+    },
+    {
+      "order": 3,
+      "card": "The Magician",
+      "positionLabel": "발현 방식",
+      "positionMeaning": "그 성격이 실제로 드러나는 방식",
+      "aiInterpretation": "마법사 카드는 의지와 실행력을 상징합니다. 이 인물의 자유로운 성향은 실제 행동으로 적극적으로 표현되는 방식으로 드러납니다."
+    }
+  ],
+  "overallInterpretation": "이 인물은 안정적이고 지지적인 환경에서 자유로운 자아를 형성했으며, 그 자유로움을 주저 없이 행동으로 옮기는 실행력 있는 성격을 지니고 있습니다.",
+  "readerNote": "실제 상담에서는 첫인상보다 훨씬 적극적인 모습을 보였다. 카드 해석과 실제 성향이 잘 일치하는 사례.",
+  "createdAt": "2026-08-09T21:00:00+09:00",
+  "createdBy": "example-admin"
+}
