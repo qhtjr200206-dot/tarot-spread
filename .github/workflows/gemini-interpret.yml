@@ -1,0 +1,43 @@
+name: Gemini 리딩 해석 생성
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/_requests/**.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gemini-interpret
+  cancel-in-progress: false
+
+jobs:
+  interpret:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Gemini 호출 및 응답 파일 생성
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-2.5-flash
+        run: node .github/scripts/process-requests.mjs
+
+      - name: 결과 커밋 및 푸시
+        run: |
+          git config user.name "tarot-gemini-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/_requests data/_responses
+          if git diff --cached --quiet; then
+            echo "커밋할 변경사항이 없습니다."
+          else
+            git commit -m "Gemini 리딩 해석 결과 반영 [skip ci]"
+            git push
+          fi

@@ -115,10 +115,16 @@ data/
   "spreadId": "spread_20260809_personality",
   "date": "2026-08-09",
   "title": null,
+  "characterContext": {
+    "name": "드미트리 카라마조프",
+    "info": "퇴역 장교, 격정적이고 충동적인 성격",
+    "situation": "아버지와 유산 문제로 갈등하는 시점"
+  },
   "cards": [
     {
       "order": 1,
       "card": "The Fool",
+      "orientation": "upright",
       "positionLabel": "성격",
       "positionMeaning": "인물의 표면적으로 드러나는 성격",
       "aiInterpretation": "..."
@@ -131,15 +137,17 @@ data/
 }
 ```
 
-> 카드 방향(정/역방향)은 필수 요구사항은 아니지만, `card` 필드를 `"The Fool (역)"`처럼 표기하거나 `orientation` 필드를 추가해 나중에 확장 가능하도록 설계를 열어둡니다.
+- `characterContext`는 선택 항목입니다(캐릭터 이름/기본 정보/상황을 입력하면 AI 해석이 그 인물에 맞춰 생성되고, 비워두면 `null`).
+- `orientation`은 `"upright"`(정방향) 또는 `"reversed"`(역방향)입니다.
 
 ## 7. Gemini 연동 설계 (요약)
 
 - 브라우저(GitHub Pages)에서 Gemini API를 직접 호출하지 않습니다 — API 키가 그대로 노출되기 때문입니다.
-- 대신 **Cloudflare Worker 프록시**를 하나 두고, 그 안에서만 Gemini API 키를 사용합니다.
-- 관리자 화면 → Cloudflare Worker(`/api/interpret`) → Gemini API → 포지션별 해석 + 총합 해석을 JSON으로 반환 → 관리자 화면에 채움 → 관리자가 검토/수정 후 저장.
-- 리딩 1건당 Gemini 호출은 정확히 1회 (모든 카드+포지션 정보를 한 번의 프롬프트로 묶어서 전송).
-- 상세 구현 순서와 보안 설정은 `BUILD_GUIDE.md`의 4단계를 참고.
+- Cloudflare Worker 프록시를 처음 시도했으나, Google Gemini API가 특정 지역을 차단하고 Cloudflare Workers는 무료 플랜에서 실행 지역을 고정할 수 없어(Enterprise 전용 기능) 요청이 계속 지역 차단에 걸리는 문제가 있었습니다. 그래서 **GitHub Actions**로 전환했습니다.
+- 흐름: 관리자 화면 → `data/_requests/{id}.json` 커밋(카드+포지션+캐릭터 정보) → GitHub Actions(`gemini-interpret.yml`)가 push를 감지해 repo secret으로 Gemini 호출 → 78장 카드 참고 의미표(`.github/scripts/card-meanings.mjs`)를 프롬프트에 포함 → 결과를 `data/_responses/{id}.json`으로 커밋 → 관리자 화면이 그 파일이 나타날 때까지 폴링 후 폼에 채움 → 관리자가 검토/수정 후 저장.
+- 이 방식은 완전 무료지만, GitHub Actions 실행 시간만큼(보통 수십 초~2분) 결과 반영이 지연됩니다.
+- 리딩 1건당 Gemini 호출은 정확히 1회 (모든 카드+포지션+캐릭터 정보를 한 번의 프롬프트로 묶어서 전송). "다시 생성" 버튼으로 재호출 가능.
+- 상세 구현 순서는 `BUILD_GUIDE.md`의 4단계를 참고.
 
 ## 8. 디자인 가이드
 

@@ -371,6 +371,24 @@ textarea {
   margin-bottom: 10px;
 }
 
+.inline-fields {
+  display: flex;
+  gap: 10px;
+}
+
+.inline-fields > * {
+  flex: 1;
+}
+
+.inline-fields .orientation-select {
+  flex: 0 0 130px;
+}
+
+.regenerate-hint {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
 .alert {
   border-radius: 10px;
   padding: 12px 14px;

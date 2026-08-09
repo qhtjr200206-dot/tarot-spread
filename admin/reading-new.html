@@ -13,7 +13,6 @@
   </script>
   <link rel="stylesheet" href="../assets/css/theme.css" />
   <link rel="stylesheet" href="../assets/css/main.css" />
-  <datalist id="card-name-list"></datalist>
 </head>
 <body>
   <header class="site-header">
@@ -45,12 +44,19 @@
       </div>
 
       <div class="form-group">
+        <label>캐릭터 정보 (선택 — 입력하면 AI 해석이 이 인물에 맞춰 생성됩니다)</label>
+        <input type="text" id="character-name-input" placeholder="캐릭터 이름 (예: 드미트리 카라마조프)" style="margin-bottom: 8px;" />
+        <textarea id="character-info-input" placeholder="기본 정보 (나이, 신분, 관계, 배경 등)"></textarea>
+        <textarea id="character-situation-input" placeholder="현재 상황 / 이 리딩이 다루는 맥락" style="margin-top: 8px;"></textarea>
+      </div>
+
+      <div class="form-group">
         <label>카드 배치</label>
         <div id="cards-editor"><p class="skeleton-text">스프레드 정보를 불러오는 중...</p></div>
       </div>
 
       <div class="form-group">
-        <button type="button" id="ai-interpret-btn" class="btn btn-secondary" disabled>✨ AI 해석 생성 (Gemini, 1회 호출)</button>
+        <button type="button" id="ai-interpret-btn" class="btn btn-secondary" disabled>✨ AI 해석 생성 (Gemini, 1회 호출 · GitHub Actions 경유, 최대 2분 소요)</button>
         <p class="form-hint" id="ai-status"></p>
       </div>
 
