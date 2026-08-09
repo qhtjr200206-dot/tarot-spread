@@ -1,9 +1,0 @@
-{
-  "spreadQuestion": "이 인물은 어떤 성격인가?",
-  "characterContext": { "name": "드미트리 카라마조프", "info": "퇴역 장교, 격정적이고 충동적인 성격", "situation": "아버지와 유산 문제로 극심하게 갈등하는 시점" },
-  "positions": [
-    { "order": 1, "label": "성격", "meaning": "인물의 표면적으로 드러나는 성격", "card": "The Fool", "orientation": "upright" },
-    { "order": 2, "label": "형성 배경", "meaning": "그 성격이 형성된 배경이나 원인", "card": "The Devil", "orientation": "reversed" }
-  ],
-  "requestedAt": "2026-08-09T00:00:00.000Z"
-}
